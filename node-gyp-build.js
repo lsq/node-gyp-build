@@ -15,6 +15,7 @@ var platform = process.env.npm_config_platform || os.platform()
 var libc = process.env.LIBC || (isAlpine(platform) ? 'musl' : 'glibc')
 var armv = process.env.ARM_VERSION || (arch === 'arm64' ? '8' : vars.arm_version) || ''
 var uv = (process.versions.uv || '').split('.')[0]
+var isMingw = os.type().startsWith('MINGW32_NT')
 
 module.exports = load
 
@@ -158,7 +159,7 @@ function matchTags (runtime, abi) {
     if (tags.abi && tags.abi !== abi && !tags.napi) return false
     if (tags.uv && tags.uv !== uv) return false
     if (tags.armv && tags.armv !== armv) return false
-    if (tags.libc && tags.libc !== libc) return false
+    if (tags.libc && (tags.libc !== libc || (platform === 'win32' && !isMingw))) return false
 
     return true
   }

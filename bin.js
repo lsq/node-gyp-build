@@ -3,6 +3,7 @@
 var proc = require('child_process')
 var os = require('os')
 var path = require('path')
+var isMingw = os.type().startsWith('MINGW32_NT')
 
 if (!buildFromSource()) {
   proc.exec('node-gyp-build-test', function (err, stdout, stderr) {
@@ -21,10 +22,10 @@ function build () {
   var args = [win32 ? 'node-gyp.cmd' : 'node-gyp', 'rebuild']
 
   try {
-    var pkg = require('node-gyp/package.json')
+    var pkg = isMingw ? require(path.join(path.dirname(process.execPath), '../lib/node_modules/npm/node_modules/node-gyp/package.json')) : require('node-gyp/package.json')
     args = [
       process.execPath,
-      path.join(require.resolve('node-gyp/package.json'), '..', typeof pkg.bin === 'string' ? pkg.bin : pkg.bin['node-gyp']),
+      path.join(isMingw ? path.join(path.dirname(process.execPath), '../lib/node_modules/npm/node_modules/node-gyp') : path.join(require.resolve('node-gyp/package.json'), '..'), typeof pkg.bin === 'string' ? pkg.bin : pkg.bin['node-gyp']),
       'rebuild'
     ]
     shell = false

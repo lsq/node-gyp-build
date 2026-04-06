@@ -34,6 +34,14 @@ test('parse tags', function (t) {
     specificity: 5
   })
 
+  t.same(parseTags('node.abi64.uv1.glibc.node'), {
+    file: 'node.abi64.uv1.glibc.node',
+    runtime: 'node',
+    abi: '64',
+    uv: '1',
+    libc: 'glibc',
+    specificity: 4
+  })
   t.end()
 })
 
